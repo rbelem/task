@@ -21,3 +21,24 @@ my @headers = qw(id product salesperson A B C D location departments E);
 
 my $input_csv = Text::CSV->new({ binary => 1, auto_diag => 1 });
 my $input_csv_aoh = $input_csv->csv(in => $input_filename, headers => [@headers]);
+
+my $third_col_sum = 0;
+my $fourth_col_negative = 0;
+my $fourth_col_positive = 0;
+foreach my $row (@{$input_csv_aoh}) {
+  $third_col_sum += $row->{$headers[3]};
+
+  if ($row->{$headers[4]} > 0) {
+    $fourth_col_positive++;
+  } elsif ($row->{$headers[4]} < 0) {
+    $fourth_col_negative++;
+  }
+}
+
+print "Third column sum result: $third_col_sum\n";
+
+my $input_csv_size = scalar @{$input_csv_aoh};
+my $percentage_positive = $fourth_col_positive / $input_csv_size * 100;
+my $percentage_negative = $fourth_col_negative / $input_csv_size * 100;
+print "Negative: $fourth_col_negative - $percentage_negative, ";
+print "Positive: $fourth_col_positive - $percentage_positive\n";
