@@ -22,10 +22,16 @@ my @headers = qw(id product salesperson A B C D location departments E);
 my $input_csv = Text::CSV->new({ binary => 1, auto_diag => 1 });
 my $input_csv_aoh = $input_csv->csv(in => $input_filename, headers => [@headers]);
 
+my $output_csv = Text::CSV->new({ binary => 1, auto_diag => 1 });
+open my $output_fh, ">:encoding(UTF-8)", $output_filename;
+$output_csv->say($output_fh, [@headers]);
+
 my $third_col_sum = 0;
 my $fourth_col_negative = 0;
 my $fourth_col_positive = 0;
 foreach my $row (@{$input_csv_aoh}) {
+  $output_csv->say($output_fh, [@{$row}{@headers}]);
+
   $third_col_sum += $row->{$headers[3]};
 
   if ($row->{$headers[4]} > 0) {
@@ -34,6 +40,8 @@ foreach my $row (@{$input_csv_aoh}) {
     $fourth_col_negative++;
   }
 }
+
+close($output_fh);
 
 print "Third column sum result: $third_col_sum\n";
 
