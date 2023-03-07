@@ -1,0 +1,43 @@
+---
+
+name: Testing the interview task
+
+on: push
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install devbox
+        uses: jetpack-io/devbox-install-action@v0.2.0
+
+      - name: Run interview task without parameters
+        continue-on-error: true
+        run: devbox run -- perl ./interview-task-1.pl
+
+      - name: Run interview task with only input parameters
+        continue-on-error: true
+        run: devbox run -- perl ./interview-task-1.pl -i SampleCSVFile_11kb.csv
+
+      - name: Run interview task with only output parameters
+        continue-on-error: true
+        run: devbox run -- perl ./interview-task-1.pl -o output.csv
+
+      - name: Run interview task with non existing input file
+        continue-on-error: true
+        run: devbox run -- perl ./interview-task-1.pl -i none.csv -o output.csv
+
+      - name: Run interview task with destination without permission
+        continue-on-error: true
+        run: devbox run -- perl ./interview-task-1.pl -i SampleCSVFile_11kb.csv -o /output.csv
+
+      - name: Run interview task with all parameters
+        run: devbox run -- perl ./interview-task-1.pl -i SampleCSVFile_11kb.csv -o output.csv
+
+      - name: Archive the interview task script output
+        uses: actions/upload-artifact@v3
+        with:
+          name: interview-task-1-output
+          path: output.csv
